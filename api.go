@@ -10,6 +10,10 @@ type Client interface {
 	// ReadCoils reads from 1 to 2000 contiguous status of coils in a
 	// remote device and returns coil status.
 	ReadCoils(address, quantity uint16) (results []byte, err error)
+	// ReadCoils reads from 1 to 2000 contiguous status of coils in a
+	// remote device and returns coil status.
+	// simple modification to return bool values in readCoils function
+	ReadCoilsAsBool(address, quantity uint16) (results []bool, err error)
 	// ReadDiscreteInputs reads from 1 to 2000 contiguous status of
 	// discrete inputs in a remote device and returns input status.
 	ReadDiscreteInputs(address, quantity uint16) (results []byte, err error)
