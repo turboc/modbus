@@ -62,6 +62,40 @@ func (mb *client) ReadCoils(address, quantity uint16) (results []byte, err error
 }
 
 // Request:
+//  Function code         : 1 byte (0x01)
+//  Starting address      : 2 bytes
+//  Quantity of coils     : 2 bytes
+// Response:
+//  Function code         : 1 byte (0x01)
+//  Byte count            : 1 byte
+//  Coil status           : N* bytes (=N or N+1)
+// returns a bool list to inform coil status
+func (mb *client) ReadCoilsAsBool(address, quantity uint16) (results []bool, err error) {
+	if quantity < 1 || quantity > 2000 {
+		err = fmt.Errorf("modbus: quantity '%v' must be between '%v' and '%v',", quantity, 1, 2000)
+		return
+	}
+	request := ProtocolDataUnit{
+		FunctionCode: FuncCodeReadCoils,
+		Data:         dataBlock(address, quantity),
+	}
+	response, err := mb.send(&request)
+	if err != nil {
+		return
+	}
+	count := int(response.Data[0])
+	length := len(response.Data) - 1
+	if count != length {
+		err = fmt.Errorf("modbus: response data size '%v' does not match count '%v'", length, count)
+		return
+	}
+	for _, r := range response.Data[1:] {
+		results = append(results, (r&0x01) == 1)
+	}
+	return
+}
+
+// Request:
 //  Function code         : 1 byte (0x02)
 //  Starting address      : 2 bytes
 //  Quantity of inputs    : 2 bytes
