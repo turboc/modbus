@@ -70,6 +70,7 @@ func (mb *client) ReadCoils(address, quantity uint16) (results []byte, err error
 //  Byte count            : 1 byte
 //  Coil status           : N* bytes (=N or N+1)
 // returns a bool list to inform coil status
+// test
 func (mb *client) ReadCoilsAsBool(address, quantity uint16) (results []bool, err error) {
 	if quantity < 1 || quantity > 2000 {
 		err = fmt.Errorf("modbus: quantity '%v' must be between '%v' and '%v',", quantity, 1, 2000)
